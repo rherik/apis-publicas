@@ -66,3 +66,27 @@ class ProcessadorDadosSenado:
                 continue
         
         return pd.DataFrame(dados_processados)
+
+
+class ProcessadorDadosCamara:
+    @staticmethod
+    def deputados_para_dataframe(deputados: List) -> pd.DataFrame:
+        """Converte lista de deputados para DataFrame"""
+        dados_processados = []
+        for deputado in deputados:
+            try:
+                dados_processados.append({
+                    'id': deputado.get('id'),
+                    'uri': deputado.get('uri'),
+                    'nome': deputado.get('nome'),
+                    'siglaPartido': deputado.get('siglaPartido'),
+                    'uriPartido': deputado.get('uriPartido'),
+                    'siglaUf': deputado.get('siglaUf'),
+                    'idLegislatura': deputado.get('idLegislatura'),
+                    'urlFoto': deputado.get('urlFoto'),
+                    'email': deputado.get('email')
+                })
+            except Exception as e:
+                print(f"Erro ao processar deputado: {e}")
+
+        return pd.DataFrame(dados_processados)
