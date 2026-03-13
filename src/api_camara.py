@@ -41,6 +41,7 @@ class APICamara:
     def _comissao(self, cod_colegiado):
         """
         Detalhes de um Colegiado do Congresso Nacional
+        Em desuso pois usa api do senado
         """
         endpoint = f"comissao/{cod_colegiado}"
         url = f"{self.url_base}{endpoint}"
@@ -55,22 +56,8 @@ class APICamara:
 
     def busca_deputados_atual(self):
         """
-        Busca lista de todos os deputados em exercício
-        
+        Busca lista de todos os deputados em exercício        
         Se não for passado um parâmetro de tempo, como idLegislatura ou dataInicio, a lista enumerará somente os deputados em exercício no momento da requisição.
-        
-        Retorno
-        dados[
-        {'id': 204464, 
-        'uri': 'https://dadosabertos.camara.leg.br/api/v2/deputados/204464', 
-        'nome': 'Talíria Petrone', 
-        'siglaPartido': 'PSOL', 
-        'uriPartido': 'https://dadosabertos.camara.leg.br/api/v2/partidos/36839', 
-        'siglaUf': 'RJ', 
-        'idLegislatura': 57, 
-        'urlFoto': 'https://www.camara.leg.br/internet/deputado/bandep/204464.jpg', 
-        'email': 'dep.taliriapetrone@camara.leg.br'}
-        ]
         """
         endpoint = f"/deputados"
         url = f"{self.url_base}{endpoint}"
@@ -82,3 +69,19 @@ class APICamara:
             print(f"Tempo limite exedido para {url}")
         except requests.exceptions.RequestException as e:
             print(f"Erro na requisição para {url}: \n {e}")
+            
+    def busca_deputado(self, id):
+        """
+        Informações detalhadas sobre um deputado específico pelo id(integer)
+        """
+        endpoint = f"/deputados/{id}"
+        url = f"{self.url_base}{endpoint}"
+        try:
+            response = self.session.get(url, timeout=25)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.Timeout:
+            print(f"Tempo limite exedido para {url}")
+        except requests.exceptions.RequestException as e:
+            print(f"Erro na requisição para {url}: \n {e}")
+        

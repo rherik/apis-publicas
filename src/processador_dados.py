@@ -88,5 +88,5 @@ class ProcessadorDadosCamara:
                 })
             except Exception as e:
                 print(f"Erro ao processar deputado: {e}")
-
-        return pd.DataFrame(dados_processados)
+        df = pd.DataFrame(dados_processados)
+        return df
