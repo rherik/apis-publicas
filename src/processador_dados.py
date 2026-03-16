@@ -90,3 +90,30 @@ class ProcessadorDadosCamara:
                 print(f"Erro ao processar deputado: {e}")
         df = pd.DataFrame(dados_processados)
         return df
+    
+    @staticmethod
+    def despesas_para_dataframe(despesas: List) -> pd.DataFrame:
+        """Converte lista de despesas retornadas para DataFrame"""
+        dados_processados = []
+        for despesa in despesas:
+            try:
+                dados_processados.append({
+                    'ano': despesa.get('ano'),
+                    'mes': despesa.get('mes'),
+                    'tipoDespesa': despesa.get('tipoDespesa'),
+                    'codDocumento': despesa.get('codDocumento'),
+                    'tipoDocumento': despesa.get('tipoDocumento'),
+                    'codTipoDocumento': despesa.get('codTipoDocumento'),
+                    'dataDocumento': despesa.get('dataDocumento'),
+                    'numDocumento': despesa.get('numDocumento'),
+                    'valorDocumento': despesa.get('valorDocumento'),
+                    'urlDocumento': despesa.get('urlDocumento'),
+                    'nomeFornecedor': despesa.get('nomeFornecedor'),
+                    'cnpjCpfFornecedor': despesa.get('cnpjCpfFornecedor'),
+                    'valorLiquido': despesa.get('valorLiquido'),
+                    'valorGlosa': despesa.get('valorGlosa'),
+                    'numRessarcimento': despesa.get('numRessarcimento'),
+                    'codLote': despesa.get('codLote')
+                })
+            except Exception as e:
+                print(f"Erro {e} ao processar despesas.")
