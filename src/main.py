@@ -8,11 +8,12 @@ import logging
 from dotenv import load_dotenv
 from llama_index.core import Settings
 from llama_index.llms.groq import Groq
+from llama_index.experimental.query_engine.pandas import PandasQueryEngine
 
 load_dotenv()
 groq_key = os.environ['GROQ_KEY']
 api = APICamara()
-Settings.llm = Groq(model='llama3-70b-8192', api_key=groq_key)
+llm = Groq(model='llama-3.3-70b-versatile', api_key=groq_key)
 
 # def servico_senado():
 #     api = APISenado()
@@ -24,16 +25,16 @@ Settings.llm = Groq(model='llama3-70b-8192', api_key=groq_key)
 #     print(f"Encontrados {len(df_senadores)} senadores")
 #     df_senadores.to_csv('../data/senadores.csv', index=False)
 
-def get_file():
+def caminho_arquivo(params):
     base_dir = os.path.dirname(os.path.dirname(__file__))
     data_dir = os.path.join(base_dir, 'data')
     os.makedirs(data_dir, exist_ok=True)
-    csv_path = os.path.join(data_dir, 'deputados.csv')
+    csv_path = os.path.join(data_dir, f"deputados-{params}.csv")
     return csv_path
 
 def salva_arquivo(dataframe):
     """Salva DataFrame fornecido. Escrever nome do arquivo de acordo com os parâmetros"""
-    arquivo = dataframe.to_csv(get_file(), index=False, sep=';')
+    arquivo = dataframe.to_csv(caminho_arquivo(), index=False, sep=';')
     return arquivo
 
 def retorna_todos_deputados():
@@ -41,12 +42,16 @@ def retorna_todos_deputados():
     deputados = api.busca_deputados_atual(**params)
     df_deputados = ProcessadorDadosCamara.deputados_para_dataframe(deputados['dados'])
     print(f"Encontrados {len(df_deputados)} deputados.")
-    for index, deputado in df_deputados.iterrows():
-        print(f"{index+1} - {deputado['nome']} - {deputado['id']} - {deputado['siglaPartido']} - {deputado['idLegislatura']} - {deputado['siglaUf']}")
+    # for index, deputado in df_deputados.iterrows():
+    #     print(f"{index+1} - {deputado['nome']} - {deputado['id']} - {deputado['siglaPartido']} - {deputado['idLegislatura']} - {deputado['siglaUf']}")
+    query_engine = PandasQueryEngine(df=df_deputados, llm=llm, verbose=True)
+    response = query_engine.query('Quais deputados tiveram mais de um mandato?')
+    print(response)
+
     
 def detalhes_deputado(nome):
     usecols=["id", "nome"]
-    df = pd.read_csv(get_file(), index_col="id", usecols=usecols, sep=';')
+    df = pd.read_csv(caminho_arquivo(), index_col="id", usecols=usecols, sep=';')
     for id_dep, row in df.iterrows():
         if nome.lower() in row["nome"].lower():
             print(f"Deputado(a) encontrado {row["nome"]} - {id_dep}")
@@ -55,7 +60,7 @@ def detalhes_deputado(nome):
 
 def detalhes_despesas(nome):
     usecols=["id", "nome"]
-    df = pd.read_csv(get_file(), index_col="id", usecols=usecols, sep=';')
+    df = pd.read_csv(caminho_arquivo(), index_col="id", usecols=usecols, sep=';')
     for id_dep, row in df.iterrows():
         if nome.lower() in row["nome"].lower():
             print(f"{row["nome"]} de ID {id_dep} encontrado(a) para exibir as despesas.\n")
