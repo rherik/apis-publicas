@@ -1,11 +1,7 @@
 requests>=2.28.0
 pandas>=1.5.0
 openpyxl>=3.0.0
-jupyter>=1.0.0
+#jupyter>=1.1.1
 python-dotenv>=0.19.0
 basedosdados>=2.0.3
 rich>=14.3.3
-llama-index>=0.14.16
-llama-index-llms-groq>=0.5.0
-llama-index-experimental>=0.6.5
-polars
