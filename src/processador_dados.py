@@ -115,5 +115,8 @@ class ProcessadorDadosCamara:
                     'numRessarcimento': despesa.get('numRessarcimento'),
                     'codLote': despesa.get('codLote')
                 })
+                
             except Exception as e:
                 print(f"Erro {e} ao processar despesas.")
+        df = pd.DataFrame(dados_processados)
+        return df
