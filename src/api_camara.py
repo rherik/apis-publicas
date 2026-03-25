@@ -66,6 +66,7 @@ class APICamara:
         try:
             if params is not None:
                 response = self.session.get(url, params=params, timeout=25)
+
             else:
                 response = self.session.get(url, timeout=25)
             response.raise_for_status()
@@ -90,7 +91,7 @@ class APICamara:
         except requests.exceptions.RequestException as e:
             print(f"Erro na requisição para {url}: \n {e}")
 
-    def busca_despesas(self, id):
+    def busca_despesas(self, id, **kwargs):
         """
         Dá acesso aos registros de pagamentos e reembolsos feitos pela Câmara em prol do deputado identificado por {id}, a título da Cota para Exercício da Atividade Parlamentar, a chamada "cota parlamentar".
 
@@ -100,8 +101,10 @@ class APICamara:
         """
         endpoint = f"/deputados/{id}/despesas"
         url = f"{self.url_base}{endpoint}"
+        params = kwargs
+        
         try:
-            response = self.session.get(url, timeout=25)
+            response = self.session.get(url, params=params, timeout=25)
             response.raise_for_status()
             return response.json()
         except requests.exceptions.Timeout:

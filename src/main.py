@@ -26,12 +26,12 @@ def caminho_arquivo(params:str = ''):
     base_dir = os.path.dirname(os.path.dirname(__file__))
     data_dir = os.path.join(base_dir, 'data')
     os.makedirs(data_dir, exist_ok=True)
-    csv_path = os.path.join(data_dir, f"deputados_{params}.csv")
+    csv_path = os.path.join(data_dir, f"{params}.csv")
     return csv_path
 
 def salva_arquivo(dataframe: pd.DataFrame, params:str = ''):
     """Salva DataFrame fornecido. Escrever nome do arquivo de acordo com os parâmetros"""
-    arquivo = dataframe.to_csv(caminho_arquivo(params=params), index=False, sep=';')
+    arquivo = dataframe.to_csv(caminho_arquivo(params=params), index=False, sep=';', encoding="UTF-8")
     return arquivo
 
 def retorna_todos_deputados():
@@ -45,35 +45,45 @@ def retorna_todos_deputados():
     
 def detalhes_deputado(nome):
     usecols=["id", "nome"]
-    df = pd.read_csv(caminho_arquivo(), index_col="id", usecols=usecols, sep=';')
+    df = pd.read_csv(caminho_arquivo('deputados_2024.csv'), index_col="id", usecols=usecols, sep=';')
     for id_dep, row in df.iterrows():
         if nome.lower() in row["nome"].lower():
             print(f"Deputado(a) encontrado {row["nome"]} - {id_dep}")
             deputados = api_camara.busca_deputado(id=id_dep)
+            
             print(deputados)
 
 def detalhes_despesas(nome):
     usecols=["id", "nome"]
-    df = pd.read_csv(caminho_arquivo(), index_col="id", usecols=usecols, sep=';')
+    df = pd.read_csv(caminho_arquivo('deputados_2024'), index_col="id", usecols=usecols, sep=';')
     for id_dep, row in df.iterrows():
         if nome.lower() in row["nome"].lower():
             print(f"{row["nome"]} de ID {id_dep} encontrado(a) para exibir as despesas.\n")
-
-            despesas = api_camara.busca_despesas(id=id_dep)
+            
+            params = {'ano': '2024'}
+            despesas = api_camara.busca_despesas(id=id_dep, **params)
             df_despesas = ProcessadorDadosCamara.despesas_para_dataframe(despesas['dados'])
             
-            print(df_despesas)
+            #print(df_despesas)
+            salva_arquivo(df_despesas, f"despesas_{nome}")
             
 def fonte_base_dos_dados():
     fonte_base_dos_dados = api_org.bens_deputado()
     print(fonte_base_dos_dados)
 
 def fonte_frente_deputado():
-    fonte_base_dos_dados = api_org.frente_deputado()
+    fonte_base_dos_dados = api_org.frente_deputado(id_deputado='204464')
     print(fonte_base_dos_dados)
+    
+def bd_candidatos():
+    fonte_bd_candidatos = api_org.bd_candidatos()
+    salva_arquivo(dataframe=fonte_bd_candidatos, params='candidatos_em_eleicoes')
+    return fonte_bd_candidatos
 
 if __name__ == "__main__":
     #retorna_todos_deputados()
-    detalhes_despesas(nome='Talíria')
+    #detalhes_deputado(nome='')
+    detalhes_despesas(nome='')
     #print(api.busca_deputados_atual())
     #fonte_frente_deputado()
+    #print(bd_candidatos())
