@@ -67,23 +67,31 @@ def detalhes_despesas(nome):
             #print(df_despesas)
             salva_arquivo(df_despesas, f"despesas_{nome}")
             
-def fonte_base_dos_dados():
-    fonte_base_dos_dados = api_org.bens_deputado()
-    print(fonte_base_dos_dados)
+def bd_bens():
+    fonte_base_dos_dados = api_org.bens_candidatos()
+    salva_arquivo(fonte_base_dos_dados, 'bens_deputados_rj')
+    
 
 def fonte_frente_deputado():
     fonte_base_dos_dados = api_org.frente_deputado(id_deputado='204464')
-    print(fonte_base_dos_dados)
+    return fonte_base_dos_dados
     
 def bd_candidatos():
     fonte_bd_candidatos = api_org.bd_candidatos()
     salva_arquivo(dataframe=fonte_bd_candidatos, params='candidatos_em_eleicoes')
     return fonte_bd_candidatos
 
+def bd_receitas_por_candidato():
+    fonte_bd = api_org.receitas_por_candidato()
+    salva_arquivo(fonte_bd, 'receitas_por_candidato')
+    return fonte_bd
+
 if __name__ == "__main__":
     #retorna_todos_deputados()
     #detalhes_deputado(nome='')
-    detalhes_despesas(nome='')
+    #detalhes_despesas(nome='')
     #print(api.busca_deputados_atual())
-    #fonte_frente_deputado()
+    #print(bd_bens())
+    #print(fonte_frente_deputado())
     #print(bd_candidatos())
+    print(bd_receitas_por_candidato())
