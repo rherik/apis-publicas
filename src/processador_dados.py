@@ -70,7 +70,7 @@ class ProcessadorDadosSenado:
 
 class ProcessadorDadosCamara:
     @staticmethod
-    def deputados_para_dataframe(deputados: List) -> pd.DataFrame:
+    def deputados_para_dataframe(deputados: List, sigla_sexo: str = None) -> pd.DataFrame:
         """Converte lista de deputados para DataFrame"""
         dados_processados = []
         for deputado in deputados:
@@ -84,7 +84,8 @@ class ProcessadorDadosCamara:
                     'siglaUf': deputado.get('siglaUf'),
                     'idLegislatura': deputado.get('idLegislatura'),
                     'urlFoto': deputado.get('urlFoto'),
-                    'email': deputado.get('email')
+                    'email': deputado.get('email'),
+                    'siglaSexo': sigla_sexo
                 })
             except Exception as e:
                 print(f"Erro ao processar deputado: {e}")

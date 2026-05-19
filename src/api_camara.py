@@ -76,7 +76,7 @@ class APICamara:
         except requests.exceptions.RequestException as e:
             print(f"Erro na requisição para {url}: \n {e}")
             
-    def busca_deputado(self, id: str):
+    def busca_deputado(self, id: str=''):
         """
         Informações detalhadas sobre um deputado específico pelo id(integer)
         """
@@ -112,7 +112,7 @@ class APICamara:
         except requests.exceptions.RequestException as e:
             print(f"Erro na requisição para {url}: \n {e}")
 
-    def integrantes_partidos(self, siglaPartido: str):
+    def integrantes_partidos(self, siglaPartido: str=''):
         """
         Retorna uma lista de dados básicos sobre os partidos políticos que têm ou já tiveram deputados na Câmara. Se não forem passados parâmetros, o serviço retorna os partidos que têm deputados em exercício no momento da requisição.
 
@@ -147,4 +147,6 @@ class APICamara:
             print(f"Tempo limite exedido para {url}")
         except requests.exceptions.RequestException as e:
             print(f"Erro na requisição para {url}: \n {e}")
-        
+
+    def situacoesDeputados(self, id):
+        pass

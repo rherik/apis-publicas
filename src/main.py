@@ -6,6 +6,7 @@ from dados_org import FonteBaseDosDados
 import pandas as pd
 from api_camara import APICamara
 import logging
+from time import sleep
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -31,17 +32,29 @@ def caminho_arquivo(params:str = ''):
 
 def salva_arquivo(dataframe: pd.DataFrame, params:str = ''):
     """Salva DataFrame fornecido. Escrever nome do arquivo de acordo com os parâmetros"""
-    arquivo = dataframe.to_csv(caminho_arquivo(params=params), index=False, sep=';', encoding="UTF-8")
-    return arquivo
+    dataframe.to_csv(caminho_arquivo(params=params), index=False, sep=';', encoding="UTF-8")
 
-def retorna_todos_deputados():
-    params = {'dataInicio': '2024-01-01', 'dataFim': '2024-12-31'}
-    deputados = api_camara.busca_deputados_atual(**params)
-    df_deputados = ProcessadorDadosCamara.deputados_para_dataframe(deputados['dados'])
+def retorna_deputados():
+    paramsMulheres = {'dataInicio': '2023-02-01', 'dataFim': '2027-01-31', 'siglaSexo': 'F'} #Isso é params = {'idLegislatura': 57}
+    paramsHomens = {'dataInicio': '2023-02-01', 'dataFim': '2027-01-31', 'siglaSexo': 'M'} #Isso é params = {'idLegislatura': 57}
+
+    deputadasMulheres = api_camara.busca_deputados_atual(**paramsMulheres)
+    deputadosHomens = api_camara.busca_deputados_atual(**paramsHomens)
+
+    df_deputadas_mulheres = ProcessadorDadosCamara.deputados_para_dataframe(deputadasMulheres.get('dados', []), sigla_sexo='F')
+    df_deputados_homens = ProcessadorDadosCamara.deputados_para_dataframe(deputadosHomens.get('dados', []), sigla_sexo='M')
+
+    df_deputados = pd.concat([df_deputadas_mulheres, df_deputados_homens], ignore_index=True)
+
+    df_deputados = df_deputados.drop_duplicates(subset='id')
+
     print(f"Encontrados {len(df_deputados)} deputados.")
+    print('id - Nome - Id do Deputado - Sigla do partido - Legislatura - UF - Sigla Sexo')
     for index, deputado in df_deputados.iterrows():
-        print(f"{index+1} - {deputado['nome']} - {deputado['id']} - {deputado['siglaPartido']} - {deputado['idLegislatura']} - {deputado['siglaUf']}")
-    salva_arquivo(dataframe=df_deputados, params='2024')
+        sleep(0.8)
+        print(f"{index+1} - {deputado['nome']} - {deputado['id']} - {deputado['siglaPartido']} - {deputado['idLegislatura']} - {deputado['siglaUf']} - {deputado['siglaSexo']}")
+
+    salva_arquivo(dataframe=df_deputados, params='M_F_discriminados_legis57')
     
 def detalhes_deputado(nome):
     usecols=["id", "nome"]
@@ -86,12 +99,21 @@ def bd_receitas_por_candidato():
     salva_arquivo(fonte_bd, 'receitas_por_candidato')
     return fonte_bd
 
+def arquivos_iniciais():
+    retorna_deputados()
+
+def main():
+    # Arquivos a serem criados
+    # Todos os deputados da legislatura atual (2023-2027)
+    # Retornar Deputados por estado e sexo
+    pass
+
 if __name__ == "__main__":
-    #retorna_todos_deputados()
+    retorna_deputados()
     #detalhes_deputado(nome='')
     #detalhes_despesas(nome='')
     #print(api.busca_deputados_atual())
     #print(bd_bens())
     #print(fonte_frente_deputado())
     #print(bd_candidatos())
-    print(bd_receitas_por_candidato())
+    #print(bd_receitas_por_candidato())

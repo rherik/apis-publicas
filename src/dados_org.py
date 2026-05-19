@@ -211,7 +211,7 @@ class FonteBaseDosDados:
       LEFT JOIN (SELECT DISTINCT subclasse,descricao_subclasse,descricao_classe,descricao_grupo,descricao_divisao,descricao_secao  FROM `basedosdados.br_bd_diretorios_brasil.cnae_2`) AS diretorio_cnae_2_doador_subclasse
           ON dados.cnae_2_doador_subclasse = diretorio_cnae_2_doador_subclasse.subclasse
       WHERE ano = 2024
-        AND cnpj_candidato IS NOT NULL
+        --AND cnpj_candidato IS NOT NULL
       LIMIT 20
       """
     df = bd.read_sql(
