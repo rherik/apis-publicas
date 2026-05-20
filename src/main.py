@@ -32,7 +32,7 @@ def caminho_arquivo(params:str = ''):
 
 def salva_arquivo(dataframe: pd.DataFrame, params:str = ''):
     """Salva DataFrame fornecido. Escrever nome do arquivo de acordo com os parâmetros"""
-    dataframe.to_csv(caminho_arquivo(params=params), index=False, sep=';', encoding="UTF-8")
+    dataframe.to_csv(caminho_arquivo(params=params), index=False, sep=',', encoding="UTF-8")
 
 def retorna_deputados():
     paramsMulheres = {'dataInicio': '2023-02-01', 'dataFim': '2027-01-31', 'siglaSexo': 'F'} #Isso é params = {'idLegislatura': 57}
@@ -41,8 +41,8 @@ def retorna_deputados():
     deputadasMulheres = api_camara.busca_deputados_atual(**paramsMulheres)
     deputadosHomens = api_camara.busca_deputados_atual(**paramsHomens)
 
-    df_deputadas_mulheres = ProcessadorDadosCamara.deputados_para_dataframe(deputadasMulheres.get('dados', []), sigla_sexo='F')
-    df_deputados_homens = ProcessadorDadosCamara.deputados_para_dataframe(deputadosHomens.get('dados', []), sigla_sexo='M')
+    df_deputadas_mulheres = ProcessadorDadosCamara.deputados_para_dataframe(deputadasMulheres.get('dados', []), sigla_sexo='Feminino')
+    df_deputados_homens = ProcessadorDadosCamara.deputados_para_dataframe(deputadosHomens.get('dados', []), sigla_sexo='Masculino')
 
     df_deputados = pd.concat([df_deputadas_mulheres, df_deputados_homens], ignore_index=True)
 
